@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput } from 'react-native';
 import BottomBar from './BottomBar'; // Adjust the path accordingly
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SwitchSelector from 'react-native-switch-selector';
@@ -9,6 +9,10 @@ const ShopScreen = ({ navigation }) => {
     const [points, setPoints] = useState(3.8); // Example initial points value
     const [selectedBook, setSelectedBook] = useState(null); // Track selected book for the modal
     const [isModalVisible, setIsModalVisible] = useState(false); // Track if modal is visible
+    const [isDonateModalVisible, setIsDonateModalVisible] = useState(false); // Track if donation modal is visible
+    const [selectedInstitution, setSelectedInstitution] = useState(null); // Track selected charity
+    const [donationAmount, setDonationAmount] = useState(''); // Track the donation amount
+    const [isDonationAmountModalVisible, setIsDonationAmountModalVisible] = useState(false); // Track if donation amount modal is visible
 
     const toggleSwitch = (value) => {
         setFocusMode(value);
@@ -18,6 +22,34 @@ const ShopScreen = ({ navigation }) => {
         setSelectedBook(book);
         setIsModalVisible(true); // Show the modal
     };
+
+    const handleDonateToCharity = () => {
+        setIsDonateModalVisible(true); // Show the donation modal
+    };
+
+    const confirmDonation = (institution) => {
+        setSelectedInstitution(institution);
+        setIsDonateModalVisible(false); // Close the donation modal
+        setIsDonationAmountModalVisible(true); // Show the donation amount modal
+    };
+
+    const handleDonation = () => {
+        const donation = parseFloat(donationAmount);
+        if (donation > points) {
+            console.log('Not enough points to donate this amount.');
+            return;
+        }
+        setPoints(points - donation); // Deduct points
+        console.log(`Donated ${donation} points to ${selectedInstitution}`);
+        setDonationAmount(''); // Reset donation amount
+        setIsDonationAmountModalVisible(false); // Close donation amount modal
+    };
+
+    const charitableInstitutions = [
+        { name: 'World Wildlife Fund (WWF)' },
+        { name: 'Doctors Without Borders' },
+        { name: 'Red Cross' },
+    ];
 
     const confirmPurchase = () => {
         const bookPrice = parseFloat(selectedBook.price.split(' ')[0]); // Extract the numeric price from the book price string
@@ -94,7 +126,7 @@ const ShopScreen = ({ navigation }) => {
                     {/* Donation Section */}
                     <Text style={styles.sectionTitle}>Donate Points</Text>
                     <View style={styles.donationOptions}>
-                        <TouchableOpacity style={styles.donationButton} onPress={() => console.log('Donated to Charity')}>
+                        <TouchableOpacity style={styles.donationButton} onPress={handleDonateToCharity}>
                             <Text style={styles.buttonText}>Donate to Charity</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.donationButton} onPress={() => console.log('Donated to Plant Trees')}>
@@ -131,6 +163,61 @@ const ShopScreen = ({ navigation }) => {
                                 </View>
                             </>
                         )}
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Charity Donation Modal */}
+            <Modal
+                transparent={true}
+                visible={isDonateModalVisible}
+                onRequestClose={() => setIsDonateModalVisible(false)}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+                        {/* Close button for donation modal */}
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setIsDonateModalVisible(false)}>
+                            <Icon name="times" size={24} color="#000" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.modalTitle}>Select Charity</Text>
+                        {charitableInstitutions.map((institution, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={styles.charityOption}
+                                onPress={() => confirmDonation(institution.name)}
+                            >
+                                <Text style={styles.charityText}>{institution.name}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Donation Amount Modal */}
+            <Modal
+                transparent={true}
+                visible={isDonationAmountModalVisible}
+                onRequestClose={() => setIsDonationAmountModalVisible(false)}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+                        {/* Close button for donation amount modal */}
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setIsDonationAmountModalVisible(false)}>
+                            <Icon name="times" size={24} color="#000" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.modalTitle}>Enter Donation Amount</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter amount (max: points available)"
+                            keyboardType="numeric"
+                            value={donationAmount}
+                            onChangeText={setDonationAmount}
+                        />
+                        <TouchableOpacity style={styles.confirmButton} onPress={handleDonation}>
+                            <Text style={styles.buttonText}>Donate</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -305,6 +392,28 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
+    },
+    charityOption: {
+        marginVertical: 10,
+        backgroundColor: '#FF69B4',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        width: '100%',
+        alignItems: 'center',
+    },
+    charityText: {
+        color: '#fff',
+        fontSize: 16,
+        paddingBottom: 2
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+        width: '100%',
     },
 });
 
