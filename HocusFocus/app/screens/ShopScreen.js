@@ -13,6 +13,8 @@ const ShopScreen = ({ navigation }) => {
     const [selectedInstitution, setSelectedInstitution] = useState(null); // Track selected charity
     const [donationAmount, setDonationAmount] = useState(''); // Track the donation amount
     const [isDonationAmountModalVisible, setIsDonationAmountModalVisible] = useState(false); // Track if donation amount modal is visible
+    const [treesToDonate, setTreesToDonate] = useState(''); // Track the number of trees to donate
+    const [isTreeDonationModalVisible, setIsTreeDonationModalVisible] = useState(false); // Track if tree donation modal is visible
 
     const toggleSwitch = (value) => {
         setFocusMode(value);
@@ -43,6 +45,22 @@ const ShopScreen = ({ navigation }) => {
         console.log(`Donated ${donation} points to ${selectedInstitution}`);
         setDonationAmount(''); // Reset donation amount
         setIsDonationAmountModalVisible(false); // Close donation amount modal
+    };
+
+    const handlePlantTrees = () => {
+        setIsTreeDonationModalVisible(true); // Show the tree donation modal
+    };
+
+    const confirmTreeDonation = () => {
+        const trees = parseInt(treesToDonate);
+        if (trees > points) {
+            console.log('Not enough points to donate this amount of trees.');
+            return;
+        }
+        setPoints(points - trees); // Deduct points for the trees donated
+        console.log(`Donated ${trees} trees (points)`);
+        setTreesToDonate(''); // Reset tree donation input
+        setIsTreeDonationModalVisible(false); // Close tree donation modal
     };
 
     const charitableInstitutions = [
@@ -129,7 +147,7 @@ const ShopScreen = ({ navigation }) => {
                         <TouchableOpacity style={styles.donationButton} onPress={handleDonateToCharity}>
                             <Text style={styles.buttonText}>Donate to Charity</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.donationButton} onPress={() => console.log('Donated to Plant Trees')}>
+                        <TouchableOpacity style={styles.donationButton} onPress={handlePlantTrees}>
                             <Text style={styles.buttonText}>Plant Trees</Text>
                         </TouchableOpacity>
                     </View>
@@ -177,7 +195,7 @@ const ShopScreen = ({ navigation }) => {
                     <View style={styles.modalContainer}>
                         {/* Close button for donation modal */}
                         <TouchableOpacity style={styles.closeButton} onPress={() => setIsDonateModalVisible(false)}>
-                            <Icon name="times" size={24} color="#000" />
+                            <Icon name="times" size={20} color="#000" />
                         </TouchableOpacity>
 
                         <Text style={styles.modalTitle}>Select Charity</Text>
@@ -217,6 +235,34 @@ const ShopScreen = ({ navigation }) => {
                         />
                         <TouchableOpacity style={styles.confirmButton} onPress={handleDonation}>
                             <Text style={styles.buttonText}>Donate</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Tree Donation Modal */}
+            <Modal
+                transparent={true}
+                visible={isTreeDonationModalVisible}
+                onRequestClose={() => setIsTreeDonationModalVisible(false)}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+                        {/* Close button for tree donation modal */}
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setIsTreeDonationModalVisible(false)}>
+                            <Icon name="times" size={20} color="#000" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.modalTitle}>Enter Number of Trees to Plant</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter number of trees (max: points available)"
+                            keyboardType="numeric"
+                            value={treesToDonate}
+                            onChangeText={setTreesToDonate}
+                        />
+                        <TouchableOpacity style={styles.confirmButton} onPress={confirmTreeDonation}>
+                            <Text style={styles.buttonText}>Donate Trees</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -370,6 +416,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
+        marginTop: 8,
     },
     modalText: {
         fontSize: 16,
@@ -414,6 +461,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingHorizontal: 10,
         width: '100%',
+        marginTop: 8
     },
 });
 
