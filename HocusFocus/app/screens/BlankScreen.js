@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingBottom: "18%"
+    paddingBottom: "18%",
   },
   button: {
     backgroundColor: '#FF69B4',
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
   pointText: {
     fontSize: 16,
     color: '#000',
+    fontWeight: 'bold',
   },
   nextButton: {
     backgroundColor: '#FF69B4',

@@ -41,7 +41,7 @@ const HomeScreen = () => {
           <Text style={styles.label}>Password:</Text>
           <View style={styles.passwordContainer}>
             <TextInput
-              style={styles.input}
+              style={styles.inputPassword}
               placeholder="Enter your password"
               value={password}
               onChangeText={(text) => setPassword(text)}
@@ -49,18 +49,17 @@ const HomeScreen = () => {
               autoCapitalize="none"
               textContentType="password"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIconContainer}>
               <Ionicons
                 name={showPassword ? 'eye-off' : 'eye'}
                 size={24}
                 color="gray"
-                style={styles.eyeIcon}
               />
             </TouchableOpacity>
           </View>
         </View>
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
@@ -102,11 +101,18 @@ const styles = StyleSheet.create({
     width: 90, // Fixed width for the label for alignment
   },
   input: {
-    borderWidth: 1, // Border for the input box
+    borderWidth: 2, // Border for the input box
     borderColor: '#ccc', // Border color
     borderRadius: 5, // Rounded corners
     padding: 10, // Padding inside the input
     flex: 1, // Allow the input to take the remaining space
+  },
+  inputPassword: {
+    borderWidth: 2, // Border for the input box
+    borderColor: '#ccc', // Border color
+    borderRadius: 5, // Rounded corners
+    padding: 10, // Padding inside the input
+    width: 214
   },
   passwordContainer: {
     flexDirection: 'row', // Arrange input and icon in a row
@@ -114,7 +120,11 @@ const styles = StyleSheet.create({
     flex: 1, // Allow the password input to take the remaining space
   },
   eyeIcon: {
-    marginLeft: 10, // Space between input and icon
+    marginLeft: '5%'
+  },
+  eyeIconContainer: {
+    marginLeft: 7,
+    position: 'relative'
   },
   button: {
     backgroundColor: '#FF1493', // Button background color
