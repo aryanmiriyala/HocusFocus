@@ -1,5 +1,3 @@
-// BlankScreen.js
-
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,15 +5,19 @@ import SwitchSelector from 'react-native-switch-selector';
 import BottomBar from './BottomBar'; // Adjust the path accordingly
 
 const BlankScreen = ({ navigation }) => {
-  const [focusMode, setFocusMode] = useState("Easy");
-  const [selectedButton, setSelectedButton] = useState("Easy");
+  const [focusMode, setFocusMode] = useState("Easy"); // Sync with button state
+  const [selectedButton, setSelectedButton] = useState("Easy"); // Sync with toggle state
 
-  const toggleSwitch = (value) => {
-    setFocusMode(value);
+  // Sync toggle and button selection
+  const handleButtonPress = (value) => {
+    setFocusMode(value); // Update the toggle state
+    setSelectedButton(value); // Update the button state
   };
 
-  const handleButtonPress = (value) => {
-    setSelectedButton(value);
+  // Sync toggle and button selection
+  const toggleSwitch = (value) => {
+    setFocusMode(value); // Update the toggle state
+    setSelectedButton(value); // Update the button state
   };
 
   const focusOptions = [
@@ -37,8 +39,8 @@ const BlankScreen = ({ navigation }) => {
           <Text style={styles.focusLabel}>HocusFocus Mode</Text>
           <SwitchSelector
             options={focusOptions}
-            initial={0}
-            onPress={toggleSwitch}
+            value={focusMode} // Bind the value to the state
+            onPress={toggleSwitch} // Update state when toggled
             style={styles.switchSelector}
             buttonColor="#FF69B4"
             textColor="#000"
