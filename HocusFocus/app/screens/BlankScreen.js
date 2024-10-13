@@ -39,7 +39,7 @@ const BlankScreen = ({ navigation }) => {
           <Text style={styles.focusLabel}>HocusFocus Mode</Text>
           <SwitchSelector
             options={focusOptions}
-            value={focusMode} // Bind the value to the state
+            initial={focusMode === 'Easy' ? 0 : 1} // Select initial toggle based on state
             onPress={toggleSwitch} // Update state when toggled
             style={styles.switchSelector}
             buttonColor="#FF69B4"

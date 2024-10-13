@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal } from 'react-native';
 import BottomBar from './BottomBar'; // Adjust the path accordingly
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SwitchSelector from 'react-native-switch-selector';
@@ -7,19 +7,31 @@ import SwitchSelector from 'react-native-switch-selector';
 const ShopScreen = ({ navigation }) => {
     const [focusMode, setFocusMode] = useState("Easy");
     const [points, setPoints] = useState(3.8); // Example initial points value
+    const [selectedBook, setSelectedBook] = useState(null); // Track selected book for the modal
+    const [isModalVisible, setIsModalVisible] = useState(false); // Track if modal is visible
 
     const toggleSwitch = (value) => {
         setFocusMode(value);
     };
 
-    const handleBuyBook = (bookTitle) => {
-        // Add purchase functionality here
-        console.log(`Purchased: ${bookTitle}`);
+    const handleBuyBook = (book) => {
+        setSelectedBook(book);
+        setIsModalVisible(true); // Show the modal
     };
 
-    const handleDonate = (cause) => {
-        // Add donation functionality here
-        console.log(`Donated points to: ${cause}`);
+    const confirmPurchase = () => {
+        const bookPrice = parseFloat(selectedBook.price.split(' ')[0]); // Extract the numeric price from the book price string
+        if (points >= bookPrice) {
+            setPoints(points - bookPrice); // Deduct points
+            console.log(`Purchased: ${selectedBook.title}`);
+        } else {
+            console.log('Not enough points to purchase this book.');
+        }
+        setIsModalVisible(false); // Close the modal
+    };
+
+    const cancelPurchase = () => {
+        setIsModalVisible(false); // Just close the modal without any changes
     };
 
     const books = [
@@ -56,7 +68,7 @@ const ShopScreen = ({ navigation }) => {
 
                 {/* Points Section */}
                 <View style={styles.pointsContainer}>
-                    <Text style={styles.pointsText}>Total Points: {points}</Text>
+                    <Text style={styles.pointsText}>Total Points: {points.toFixed(1)}</Text>
                 </View>
 
                 {/* Book List & Donation Options */}
@@ -71,7 +83,7 @@ const ShopScreen = ({ navigation }) => {
                                 <Text style={styles.bookPrice}>{book.price}</Text>
                                 <TouchableOpacity
                                     style={styles.buyButton}
-                                    onPress={() => handleBuyBook(book.title)}
+                                    onPress={() => handleBuyBook(book)}
                                 >
                                     <Text style={styles.buttonText}>Buy</Text>
                                 </TouchableOpacity>
@@ -82,15 +94,47 @@ const ShopScreen = ({ navigation }) => {
                     {/* Donation Section */}
                     <Text style={styles.sectionTitle}>Donate Points</Text>
                     <View style={styles.donationOptions}>
-                        <TouchableOpacity style={styles.donationButton} onPress={() => handleDonate('Charity')}>
+                        <TouchableOpacity style={styles.donationButton} onPress={() => console.log('Donated to Charity')}>
                             <Text style={styles.buttonText}>Donate to Charity</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.donationButton} onPress={() => handleDonate('Plant Trees')}>
+                        <TouchableOpacity style={styles.donationButton} onPress={() => console.log('Donated to Plant Trees')}>
                             <Text style={styles.buttonText}>Plant Trees</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
             </View>
+
+            {/* Confirmation Modal */}
+            <Modal
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+                        {/* Close button at the top right */}
+                        <TouchableOpacity style={styles.closeButton} onPress={cancelPurchase}>
+                            <Icon name="times" size={20} color="#000" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.modalTitle}>Confirm Purchase</Text>
+                        {selectedBook && (
+                            <>
+                                <Text style={styles.modalText}>Do you want to buy "{selectedBook.title}" for {selectedBook.price}?</Text>
+                                <View style={styles.modalButtons}>
+                                    <TouchableOpacity style={styles.confirmButton} onPress={confirmPurchase}>
+                                        <Text style={styles.buttonText}>Confirm</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.cancelButton} onPress={cancelPurchase}>
+                                        <Text style={styles.buttonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
+
             <BottomBar navigation={navigation} />
         </View>
     );
@@ -137,7 +181,7 @@ const styles = StyleSheet.create({
         width: 120,
     },
     pointsContainer: {
-        marginTop: '38%', // Position the points section below the top bar
+        marginTop: '38%',
         backgroundColor: '#FF69B4',
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -215,6 +259,52 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginHorizontal: 10,
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContainer: {
+        width: 350,
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    confirmButton: {
+        backgroundColor: '#FF69B4',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    cancelButton: {
+        backgroundColor: '#ccc',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
     },
 });
 
