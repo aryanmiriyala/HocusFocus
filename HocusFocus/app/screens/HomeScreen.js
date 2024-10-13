@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     marginLeft: 10, // Space between input and icon
   },
   button: {
-    backgroundColor: '#007BFF', // Button background color
+    backgroundColor: '#FF1493', // Button background color
     borderRadius: 5, // Rounded corners
     padding: 15, // Padding inside the button
     marginVertical: 20, // Space above and below the button
