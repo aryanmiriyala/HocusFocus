@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   focusLabel: {
-    marginLeft: 15,
+    marginLeft: 18,
     fontSize: 16,
     marginRight: 10,
   },
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingBottom: "15%"
+    paddingBottom: "18%"
   },
   button: {
     backgroundColor: '#FF69B4',

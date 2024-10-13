@@ -9,6 +9,8 @@ import ProfileScreen from './app/screens/ProfileScreen';
 import LibraryScreen from './app/screens/LibraryScreen'; // Add this import
 import ShopScreen from './app/screens/ShopScreen'; // Add this import
 import BottomBar from './app/screens/BottomBar'; // Adjust the path accordingly
+import SampleBook from './app/screens/SampleBook';
+import QuizScreen from './app/screens/QuizScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +23,8 @@ export default function App() {
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="LibraryScreen" component={LibraryScreen} />
         <Stack.Screen name="ShopScreen" component={ShopScreen} />
+        <Stack.Screen name="SampleBook" component={SampleBook} />
+        <Stack.Screen name="QuizScreen" component={QuizScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
